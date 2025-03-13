@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bidani Store - Your Fashion Destination</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary-color: #8e44ad;
+            --secondary-color: #9b59b6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 20px 0;
+            color: white;
+            text-align: center;
+        }
+
+        .store-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .store-tagline {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .cart-icon {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .category-title {
+            font-size: 24px;
+            margin: 20px 0;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .product-price {
+            font-size: 22px;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .add-to-cart {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .add-to-cart:hover {
+            background: var(--secondary-color);
+        }
+
+        .sale-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .store-name {
+                font-size: 24px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="store-name">Bidani Store</div>
+        <div class="store-tagline">Your Ultimate Fashion Destination</div>
+    </div>
+
+    <nav>
+        <div class="nav-links">
+            <a href="#"><i class="fas fa-home"></i> Home</a>
+            <a href="#"><i class="fas fa-tshirt"></i> Fashion</a>
+            <a href="#"><i class="fas fa-mobile-alt"></i> Electronics</a>
+            <a href="#"><i class="fas fa-gem"></i> Jewelry</a>
+        </div>
+        <div class="nav-links">
+            <a href="#"><i class="fas fa-user"></i> Profile</a>
+            <a href="#" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="category-title">Featured Products</h2>
+        <div class="products-grid" id="productsGrid"></div>
+    </div>
+
+    <script>
+        const products = [
+            {
+                id: 1,
+                name: "Premium Leather Jacket",
+                price: 4999,
+                description: "Stylish leather jacket for men, perfect for all seasons",
+                image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500",
+                sale: true
+            },
+            {
+                id: 2,
+                name: "Designer Handbag",
+                price: 2999,
+                description: "Elegant leather handbag with gold accents",
+                image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500"
+            },
+            {
+                id: 3,
+                name: "Smart Watch Pro",
+                price: 7999,
+                description: "Latest smartwatch with health monitoring features",
+                image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500"
+            },
+            {
+                id: 4,
+                name: "Diamond Pendant",
+                price: 12999,
+                description: "Beautiful diamond pendant with sterling silver chain",
+                image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500"
+            },
+            {
+                id: 5,
+                name: "Wireless Earbuds",
+                price: 1999,
+                description: "High-quality wireless earbuds with noise cancellation",
+                image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500",
+                sale: true
+            },
+            {
+                id: 6,
+                name: "Designer Sunglasses",
+                price: 2499,
+                description: "Premium UV protected sunglasses",
+                image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500"
+            },
+            {
+                id: 7,
+                name: "Running Shoes",
+                price: 3499,
+                description: "Comfortable running shoes with extra cushioning",
+                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"
+            },
+            {
+                id: 8,
+                name: "Gold Necklace",
+                price: 15999,
+                description: "22K Gold necklace with traditional design",
+                image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500"
+            }
+        ];
+
+        function displayProducts() {
+            const productsGrid = document.getElementById('productsGrid');
+            productsGrid.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <div style="position: relative;">
+                        <img src="${product.image}" alt="${product.name}" class="product-image">
+                        ${product.sale ? '<span class="sale-badge">SALE!</span>' : ''}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <div class="product-price">₹${product.price}</div>
+                        <p class="product-description">${product.description}</p>
+                        <button class="add-to-cart" onclick="addToCart(${product.id})">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        let cart = [];
+
+        function addToCart(productId) {
+            cart.push(productId);
+            updateCartCount();
+            alert('Product added to cart!');
+        }
+
+        function updateCartCount() {
+            document.querySelector('.cart-count').textContent = cart.length;
+        }
+
+        // Initialize
+        displayProducts();
+    </script>
+</body>
+</html>
