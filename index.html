@@ -59,6 +59,7 @@
             text-decoration: none;
             font-weight: 500;
             font-size: 16px;
+            cursor: pointer;
         }
 
         .cart-icon {
@@ -156,15 +157,69 @@
             background: var(--secondary-color);
         }
 
-        .sale-badge {
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .close-button {
             position: absolute;
+            right: 20px;
             top: 10px;
-            right: 10px;
-            background: #e74c3c;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 3px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             font-size: 14px;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .save-profile-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
         }
 
         @media (max-width: 768px) {
@@ -186,14 +241,14 @@
 
     <nav>
         <div class="nav-links">
-            <a href="#"><i class="fas fa-home"></i> Home</a>
-            <a href="#"><i class="fas fa-tshirt"></i> Fashion</a>
-            <a href="#"><i class="fas fa-mobile-alt"></i> Electronics</a>
-            <a href="#"><i class="fas fa-gem"></i> Jewelry</a>
+            <a onclick="showCategory('all')"><i class="fas fa-home"></i> Home</a>
+            <a onclick="showCategory('fashion')"><i class="fas fa-tshirt"></i> Fashion</a>
+            <a onclick="showCategory('electronics')"><i class="fas fa-mobile-alt"></i> Electronics</a>
+            <a onclick="showCategory('jewelry')"><i class="fas fa-gem"></i> Jewelry</a>
         </div>
         <div class="nav-links">
-            <a href="#"><i class="fas fa-user"></i> Profile</a>
-            <a href="#" class="cart-icon">
+            <a onclick="showProfile()"><i class="fas fa-user"></i> Profile</a>
+            <a class="cart-icon">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-count">0</span>
             </a>
@@ -201,80 +256,124 @@
     </nav>
 
     <div class="container">
-        <h2 class="category-title">Featured Products</h2>
+        <h2 class="category-title" id="categoryTitle">All Products</h2>
         <div class="products-grid" id="productsGrid"></div>
     </div>
 
-    <script>
-        const products = [
-            {
-                id: 1,
-                name: "Premium Leather Jacket",
-                price: 4999,
-                description: "Stylish leather jacket for men, perfect for all seasons",
-                image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500",
-                sale: true
-            },
-            {
-                id: 2,
-                name: "Designer Handbag",
-                price: 2999,
-                description: "Elegant leather handbag with gold accents",
-                image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500"
-            },
-            {
-                id: 3,
-                name: "Smart Watch Pro",
-                price: 7999,
-                description: "Latest smartwatch with health monitoring features",
-                image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500"
-            },
-            {
-                id: 4,
-                name: "Diamond Pendant",
-                price: 12999,
-                description: "Beautiful diamond pendant with sterling silver chain",
-                image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500"
-            },
-            {
-                id: 5,
-                name: "Wireless Earbuds",
-                price: 1999,
-                description: "High-quality wireless earbuds with noise cancellation",
-                image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500",
-                sale: true
-            },
-            {
-                id: 6,
-                name: "Designer Sunglasses",
-                price: 2499,
-                description: "Premium UV protected sunglasses",
-                image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500"
-            },
-            {
-                id: 7,
-                name: "Running Shoes",
-                price: 3499,
-                description: "Comfortable running shoes with extra cushioning",
-                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"
-            },
-            {
-                id: 8,
-                name: "Gold Necklace",
-                price: 15999,
-                description: "22K Gold necklace with traditional design",
-                image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500"
-            }
-        ];
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeProfile()">&times;</span>
+            <h2>My Profile</h2>
+            <div class="profile-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="profileName" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="profileEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="profilePhone" placeholder="Enter your phone number">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea id="profileAddress" placeholder="Enter your address"></textarea>
+                </div>
+                <button onclick="saveProfile()" class="save-profile-btn">Save Profile</button>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        // Products data
+        const products = {
+            fashion: [
+                {
+                    id: 1,
+                    name: "Premium Leather Jacket",
+                    price: 4999,
+                    description: "Stylish leather jacket for men, perfect for all seasons",
+                    image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500",
+                    category: "fashion"
+                },
+                {
+                    id: 2,
+                    name: "Designer Handbag",
+                    price: 2999,
+                    description: "Elegant leather handbag with gold accents",
+                    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500",
+                    category: "fashion"
+                }
+            ],
+            electronics: [
+                {
+                    id: 3,
+                    name: "Smart Watch Pro",
+                    price: 7999,
+                    description: "Latest smartwatch with health monitoring features",
+                    image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500",
+                    category: "electronics"
+                },
+                {
+                    id: 4,
+                    name: "Wireless Earbuds",
+                    price: 1999,
+                    description: "High-quality wireless earbuds with noise cancellation",
+                    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500",
+                    category: "electronics"
+                }
+            ],
+            jewelry: [
+                {
+                    id: 5,
+                    name: "Diamond Pendant",
+                    price: 12999,
+                    description: "Beautiful diamond pendant with sterling silver chain",
+                    image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500",
+                    category: "jewelry"
+                },
+                {
+                    id: 6,
+                    name: "Gold Necklace",
+                    price: 15999,
+                    description: "22K Gold necklace with traditional design",
+                    image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500",
+                    category: "jewelry"
+                }
+            ]
+        };
+
+        let cart = [];
+        let currentCategory = 'all';
+
+        // Show products based on category
+        function showCategory(category) {
+            currentCategory = category;
+            const categoryTitle = document.getElementById('categoryTitle');
+            categoryTitle.textContent = category === 'all' ? 'All Products' : 
+                                     category.charAt(0).toUpperCase() + category.slice(1);
+            displayProducts();
+        }
+
+        // Display products
         function displayProducts() {
             const productsGrid = document.getElementById('productsGrid');
-            productsGrid.innerHTML = products.map(product => `
+            let productsToShow = [];
+
+            if (currentCategory === 'all') {
+                Object.values(products).forEach(categoryProducts => {
+                    productsToShow = productsToShow.concat(categoryProducts);
+                });
+            } else {
+                productsToShow = products[currentCategory] || [];
+            }
+
+            productsGrid.innerHTML = productsToShow.map(product => `
                 <div class="product-card">
-                    <div style="position: relative;">
-                        <img src="${product.image}" alt="${product.name}" class="product-image">
-                        ${product.sale ? '<span class="sale-badge">SALE!</span>' : ''}
-                    </div>
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
                     <div class="product-info">
                         <h3 class="product-title">${product.name}</h3>
                         <div class="product-price">₹${product.price}</div>
@@ -287,8 +386,42 @@
             `).join('');
         }
 
-        let cart = [];
+        // Profile functions
+        function showProfile() {
+            document.getElementById('profileModal').style.display = 'block';
+            loadProfile();
+        }
 
+        function closeProfile() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('profileName').value;
+            const email = document.getElementById('profileEmail').value;
+            const phone = document.getElementById('profilePhone').value;
+            const address = document.getElementById('profileAddress').value;
+
+            if (!name || !email || !phone || !address) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const profileData = { name, email, phone, address };
+            localStorage.setItem('userProfile', JSON.stringify(profileData));
+            alert('Profile saved successfully!');
+            closeProfile();
+        }
+
+        function loadProfile() {
+            const profileData = JSON.parse(localStorage.getItem('userProfile')) || {};
+            document.getElementById('profileName').value = profileData.name || '';
+            document.getElementById('profileEmail').value = profileData.email || '';
+            document.getElementById('profilePhone').value = profileData.phone || '';
+            document.getElementById('profileAddress').value = profileData.address || '';
+        }
+
+        // Cart functions
         function addToCart(productId) {
             cart.push(productId);
             updateCartCount();
@@ -300,7 +433,9 @@
         }
 
         // Initialize
-        displayProducts();
+        window.onload = function() {
+            showCategory('all');
+        };
     </script>
 </body>
 </html>
